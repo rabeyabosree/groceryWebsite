@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { groceryProducts } from "../data/data";
 import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
+import { CiFilter } from "react-icons/ci";
 
 function AllProducts() {
   const navigate = useNavigate();
@@ -10,21 +11,18 @@ function AllProducts() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState(200);
 
-  // unique categories
+  // Unique categories
   const allCategories = ["All", ...new Set(groceryProducts.map(item => item.category))];
 
-  // show limit 5 — see more click = full show
+  // Show limit 5 — see more click = full show
   const visibleCategories = showMore ? allCategories : allCategories.slice(0, 5);
 
-  // Extract lowest price from variants [{weight, price}]
-  const getLowestPrice = (variants) => {
-    return Math.min(...variants.map(v => v.price));
-  };
+  // Extract lowest price from variants
+  const getLowestPrice = (variants) => Math.min(...variants.map(v => v.price));
 
-  // Filtering
+  // Filter products
   const filteredProducts = groceryProducts.filter(item => {
     const lowestPrice = getLowestPrice(item.variants);
-
     return (
       (selectedCategory === "All" || item.category === selectedCategory) &&
       lowestPrice <= priceRange
@@ -32,15 +30,14 @@ function AllProducts() {
   });
 
   return (
-    <div className="w-full py-6">
-      <div className="max-w-7xl mx-auto flex gap-5 px-3">
+    <div className="w-full py-6 px-3 md:px-0">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-5">
 
         {/* Sidebar (Desktop) */}
         <div className="hidden md:block w-64 bg-white shadow-lg rounded-lg p-4 h-fit">
-
           <h2 className="text-lg font-semibold mb-4">Filter Products</h2>
 
-          {/* Category */}
+          {/* Categories */}
           <h3 className="font-medium mb-2 text-gray-700">Categories</h3>
           <div className="space-y-2">
             {visibleCategories.map(cat => (
@@ -56,7 +53,6 @@ function AllProducts() {
             ))}
           </div>
 
-          {/* SEE MORE / LESS */}
           {allCategories.length > 5 && (
             <button
               onClick={() => setShowMore(!showMore)}
@@ -83,28 +79,29 @@ function AllProducts() {
           </div>
         </div>
 
-        {/* Mobile Filter Dropdown */}
-        <details className="md:hidden bg-white shadow rounded-lg p-4 mb-3">
-          <summary className="font-semibold text-gray-800 cursor-pointer">Filter Products</summary>
+        {/* Mobile Filters */}
+        <div className="md:hidden bg-white shadow rounded-lg p-4 mb-3">
+          <h4 className="font-semibold text-gray-800 cursor-pointer flex items-center gap-2">
+             <CiFilter className="text-lg text-green-600" />Filter Products
+          </h4>
 
           <div className="mt-3">
-            {/* Category buttons */}
+
+            {/* Categories */}
             <h3 className="text-sm font-medium mb-2">Categories</h3>
             <div className="flex flex-wrap gap-2">
               {visibleCategories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 text-sm rounded border ${
-                    selectedCategory === cat ? "bg-green-600 text-white" : "border-gray-300"
-                  }`}
+                  className={`px-3 py-1 text-sm rounded border ${selectedCategory === cat ? "bg-green-600 text-white" : "border-gray-300"
+                    }`}
                 >
                   {cat}
                 </button>
               ))}
             </div>
 
-            {/* See More mobile */}
             {allCategories.length > 5 && (
               <button
                 onClick={() => setShowMore(!showMore)}
@@ -127,9 +124,9 @@ function AllProducts() {
               />
             </div>
           </div>
-        </details>
+        </div>
 
-        {/* Products Section */}
+        {/* Products */}
         <div className="flex-1">
           <h1 className="text-xl font-bold mb-3">All Products</h1>
 
